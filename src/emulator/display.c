@@ -1,9 +1,9 @@
 #include "display.h"
 
-#include <stdio.h>
+#include <logger.h>
 
 struct Display initDisplay(void) {
-    printf("Initializing Display\n");
+    logMessage(LOG_LEVEL_INFO, "Initializing Display\n");
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -17,7 +17,7 @@ struct Display initDisplay(void) {
     display._screenSurface = SDL_CreateRGBSurface(0, 64, 32, 32, 0xFF0000, 0x00FF00, 0x0000FF, 0);
     //display._screenTexture = SDL_CreateTexture(display._renderer, SDL_PIXELFORMAT_RGB444, SDL_TEXTUREACCESS_STREAMING, 64, 32);
 
-    printf("Finished Display initialization\n");
+    logMessage(LOG_LEVEL_INFO, "Finished Display initialization\n");
 
     return display;
 }

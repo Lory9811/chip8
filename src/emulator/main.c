@@ -2,12 +2,16 @@
 
 #include "system.h"
 
+#include <logger.h>
+
 #include <stdio.h>
 #include <stdbool.h>
 
 int main(int argc, char** argv) {
+    logInit(LOG_LEVEL_ALL);
     struct System* system = initSystem();
     loadRom(system, "../roms/chip8-test-suite.ch8");
+    logMessage(LOG_LEVEL_INFO, "Starting\n");
 
     selectTest(system, 2);
     bool quit = false;
@@ -35,6 +39,8 @@ int main(int argc, char** argv) {
         drawScreen(system);
         cycles += 1;
     }
+
+    logClose();
 
     return 0;
 }

@@ -6,6 +6,8 @@
 
 #include "instructions/instructions.h"
 
+#include <logger.h>
+
 #include <SDL2/SDL.h>
 
 #include <stdlib.h>
@@ -22,13 +24,13 @@ struct System* initSystem(void) {
     SDL_Init(SDL_INIT_EVENTS | SDL_INIT_AUDIO);
     struct System* system = malloc(sizeof(struct System));
 
-    printf("Initializing CHIP-8\n");
+    logMessage(LOG_LEVEL_INFO, "Initializing CHIP-8\n");
 
     system->cpu = initCpu();
     system->memory = initMemory(4096);
     system->display = initDisplay();
 
-    printf("Finished CHIP-8 initalization\n");
+    logMessage(LOG_LEVEL_INFO, "Finished CHIP-8 initalization\n");
 
     return system;
 }
@@ -41,22 +43,22 @@ void loadRom(struct System* system, const char* const fileName) {
     uint16_t bytesRead = 0;
     uint8_t* restrict buffer = malloc(512);
 
-    printf("Loading ROM %s at address %04x\n", fileName, address);
+    logMessage(LOG_LEVEL_INFO, "Loading ROM %s at address %04x\n", fileName, address);
 
     while (bytesRead = fread(buffer, 1, 512, file)) {
-        printf("Writing %d bytes at %04x\n", bytesRead, address);
+        logMessage(LOG_LEVEL_INFO, "Writing %d bytes at %04x\n", bytesRead, address);
         bulkWriteMemory(&system->memory, buffer, address, bytesRead);
         address += bytesRead;
     }
 
     fclose(file);
 
-    printf("Loaded ROM\n");
+    logMessage(LOG_LEVEL_INFO, "Loaded ROM\n");
 }
 
 void executeCycle(struct System* system) {
     uint16_t opcode = readWordMemory(&system->memory, system->cpu.pc);
-    printf("Read at %04x opcode %04x\n", system->cpu.pc, opcode);
+    // logMessage(LOG_LEVEL_INFO, "Read at %04x opcode %04x\n", system->cpu.pc, opcode);
     executeInstruction(system, opcode);
 }
 
@@ -92,7 +94,7 @@ void executeInstruction(struct System* system, uint16_t opcode) {
         strLoadRegister(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);
         stepInstruction(&system->cpu);
     } else {
-        printf("Unimplemented instruction %04x\n", opcode);
+        logMessage(LOG_LEVEL_INFO, "Unimplemented instruction %04x\n", opcode);
         // stepInstruction(&system->cpu);
     }
 }

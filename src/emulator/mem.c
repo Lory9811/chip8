@@ -1,18 +1,19 @@
 #include "mem.h"
 
+#include <logger.h>
+
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
 struct Memory initMemory(uint16_t size) {
-    printf("Initializing Memory\n");
+    logMessage(LOG_LEVEL_INFO, "Initializing Memory\n");
 
     struct Memory memory = {
         .data = calloc(size, sizeof(uint8_t)),
         .size = size,
     };
 
-    printf("Finished Memory initialization\n");
+    logMessage(LOG_LEVEL_INFO, "Finished Memory initialization\n");
 
     return memory;
 }
@@ -33,7 +34,7 @@ void bulkWriteMemory(struct Memory* memory, uint8_t* const data, uint16_t start,
     if (start > memory->size
     || start + bytes > memory->size
     || start + bytes < start) {
-        printf("Invalid bulk write at %x with size %x\n", start, bytes);
+        logMessage(LOG_LEVEL_INFO, "Invalid bulk write at %x with size %x\n", start, bytes);
         return;
     } 
     memcpy(memory->data + start, data, bytes);

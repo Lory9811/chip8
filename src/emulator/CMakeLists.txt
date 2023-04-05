@@ -22,4 +22,5 @@ add_executable(chip8
     instructions/io.c
 )
 
+target_link_libraries(chip8 logger)
 target_link_libraries(chip8 -lmingw32 ${SDL2_LIBRARIES})

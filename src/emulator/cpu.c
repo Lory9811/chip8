@@ -2,17 +2,17 @@
 
 #include "instructions/instructions.h"
 
-#include <stdio.h>
+#include <logger.h>
 
 struct Cpu initCpu(void) {
-    printf("Initializing CPU\n");
+    logMessage(LOG_LEVEL_INFO, "Initializing CPU\n");
     
     struct Cpu cpu = {
         .pc = 0x200,
         .sp = 0xEFF,
     };
 
-    printf("Finished CPU initialization\n");
+    logMessage(LOG_LEVEL_INFO, "Finished CPU initialization\n");
 
     return cpu;
 }

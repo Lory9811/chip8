@@ -1,13 +1,13 @@
 #include "instructions.h"
 
-#include <stdio.h>
+#include <logger.h>
 
 /* 3XNN, 4XNN */
 void cmpi(struct Cpu* cpu, int reg, uint8_t value, int cond) {
     if (cond == INSTRUCTIONS_CMP_EQU) {
-        printf("register[%x] (%d) == %d\n", reg, cpu->registers[reg], value);
+        logMessage(LOG_LEVEL_INFO, "register[%x] (%d) == %d\n", reg, cpu->registers[reg], value);
     } else if (cond == INSTRUCTIONS_CMP_NEQ) {
-        printf("register[%x] (%d) != %d\n", reg, cpu->registers[reg], value);
+        logMessage(LOG_LEVEL_INFO, "register[%x] (%d) != %d\n", reg, cpu->registers[reg], value);
     }
 
     if ((cpu->registers[reg] == value) != cond) {
@@ -18,9 +18,9 @@ void cmpi(struct Cpu* cpu, int reg, uint8_t value, int cond) {
 /* 5XY0, 9XY0 */
 void cmp(struct Cpu* cpu, int reg, int otherReg, int cond) {
     if (cond == INSTRUCTIONS_CMP_EQU) {
-        printf("register[%x] (%d) == register[%x] (%d)\n", reg, cpu->registers[reg], otherReg, cpu->registers[otherReg]);
+        logMessage(LOG_LEVEL_INFO, "register[%x] (%d) == register[%x] (%d)\n", reg, cpu->registers[reg], otherReg, cpu->registers[otherReg]);
     } else if (cond == INSTRUCTIONS_CMP_NEQ) {
-        printf("register[%x] (%d) != register[%x] (%d)\n", reg, cpu->registers[reg], otherReg, cpu->registers[otherReg]);
+        logMessage(LOG_LEVEL_INFO, "register[%x] (%d) != register[%x] (%d)\n", reg, cpu->registers[reg], otherReg, cpu->registers[otherReg]);
     }
 
     if ((cpu->registers[reg] == cpu->registers[otherReg]) != cond) {
