@@ -9,26 +9,15 @@ struct Display initDisplay(void) {
 
     struct Display display;
 
-    // SDL_CreateWindowAndRenderer(640, 480, 0, &display._window, &display._renderer);
     display._window = SDL_CreateWindow("CHIP-8", 
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 320,
         0);
 
     display._screenSurface = SDL_CreateRGBSurface(0, 64, 32, 32, 0xFF0000, 0x00FF00, 0x0000FF, 0);
-    //display._screenTexture = SDL_CreateTexture(display._renderer, SDL_PIXELFORMAT_RGB444, SDL_TEXTUREACCESS_STREAMING, 64, 32);
 
     logMessage(LOG_LEVEL_INFO, "Finished Display initialization\n");
 
     return display;
-}
-
-void fillDisplay(struct Display* display, uint32_t color) {
-    /*SDL_SetRenderDrawColor(display->_renderer, (color >> 24) & 0xFF, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF);
-    SDL_RenderClear(display->_renderer);
-    
-    SDL_RenderPresent(display->_renderer);*/
-
-    
 }
 
 void drawFrame(struct Display* display, struct Memory* memory) {

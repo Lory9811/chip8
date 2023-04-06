@@ -13,9 +13,12 @@ int main(int argc, char** argv) {
     loadRom(system, "../roms/chip8-test-suite.ch8");
     logMessage(LOG_LEVEL_INFO, "Starting\n");
 
-    selectTest(system, 2);
+    selectTest(system, 1);
+
+    int cyclesPerFrame = 30;
     bool quit = false;
     int cycles = 0;
+    uint64_t lastDraw = SDL_GetPerformanceCounter();
     while (!quit) {
         {
             SDL_Event event;
@@ -29,15 +32,21 @@ int main(int argc, char** argv) {
                     break;
                 }
             }
-            
         }
-        /*if (cycles < 64) {
-            executeCycle(system);
-        }*/
 
-        executeCycle(system);
-        drawScreen(system);
-        cycles += 1;
+        if (cycles < cyclesPerFrame) {
+            executeCycle(system);
+            cycles += 1;
+        }
+        
+        uint64_t now = SDL_GetPerformanceCounter();
+        if ((((now - lastDraw) * 1000) / SDL_GetPerformanceFrequency()) > 16) {
+            logMessage(LOG_LEVEL_INFO, "last %d now %d\n", lastDraw, now);
+            tickTimers(system);
+            drawScreen(system);
+            cycles = 0;
+            lastDraw = now;
+        }
     }
 
     logClose();

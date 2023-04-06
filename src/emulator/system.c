@@ -3,6 +3,7 @@
 #include "cpu.h"
 #include "mem.h"
 #include "display.h"
+#include "timer.h"
 
 #include "instructions/instructions.h"
 
@@ -18,6 +19,8 @@ struct System {
     struct Cpu cpu;
     struct Memory memory;
     struct Display display;
+    struct Timer delayTimer;
+    struct Timer soundTimer;
 };
 
 struct System* initSystem(void) {
@@ -105,4 +108,9 @@ void selectTest(struct System *system, int testNum) {
 
 void drawScreen(struct System* system) {
     drawFrame(&system->display, &system->memory);
+}
+
+void tickTimers(struct System* system) {
+    tickTimer(&system->delayTimer);
+    tickTimer(&system->soundTimer);
 }

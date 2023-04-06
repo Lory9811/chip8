@@ -7,4 +7,6 @@ struct Timer {
     uint8_t counter;
 };
 
+void tickTimer(struct Timer* timer);
+
 #endif
