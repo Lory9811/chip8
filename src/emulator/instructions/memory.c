@@ -29,6 +29,8 @@ void strStoreRegister(struct Cpu* cpu, struct Memory* memory, int reg) {
         logMessage(LOG_LEVEL_INFO, "$(%04x) = cpu->registers[%x] (%d)\n", cpu->address + i, i, cpu->registers[i]);
         writeMemory(memory, cpu->address + i, cpu->registers[i]);
     }
+
+    cpu->address += reg + 1;    // CHIP-8 Quirk
 }
 
 /* FX65 */
@@ -37,4 +39,6 @@ void strLoadRegister(struct Cpu* cpu, struct Memory* memory, int reg) {
         logMessage(LOG_LEVEL_INFO, "cpu->registers[%x] = $(%04x) (%d)\n", i, cpu->address + i, readMemory(memory, cpu->address + i));
         cpu->registers[i] = readMemory(memory, cpu->address + i);
     }
+
+    cpu->address += reg + 1;    // CHIP-8 Quirk
 }

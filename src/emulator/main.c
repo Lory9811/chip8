@@ -13,9 +13,10 @@ int main(int argc, char** argv) {
     loadRom(system, "../roms/chip8-test-suite.ch8");
     logMessage(LOG_LEVEL_INFO, "Starting\n");
 
-    selectTest(system, 3);
+    selectPlatform(system, 1);
+    selectTest(system, 4);
 
-    int cyclesPerFrame = 50;
+    int cyclesPerFrame = 30;
     bool quit = false;
     int cycles = 0;
     uint64_t lastDraw = SDL_GetPerformanceCounter();

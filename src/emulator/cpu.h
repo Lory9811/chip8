@@ -8,6 +8,7 @@ struct Cpu {
     uint16_t address;       // I register, 12 bits
     uint16_t pc;
     uint16_t sp;
+    int sleepFrames;
 };
 
 struct Cpu initCpu(void);

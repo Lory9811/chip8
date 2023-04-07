@@ -4,6 +4,7 @@
 #include "../cpu.h"
 #include "../mem.h"
 #include "../display.h"
+#include "../timer.h"
 
 #include <stdint.h>
 
@@ -40,18 +41,24 @@ void add(struct Cpu* cpu, int dstReg, int srcReg);
 /* 8XY5 */
 void sub(struct Cpu* cpu, int dstReg, int srcReg);
 /* 8XY6 */
-void rsh(struct Cpu* cpu, int reg);
+void rsh(struct Cpu* cpu, int dstReg, int srcReg);
 /* 8XY7 */
 void sub2(struct Cpu* cpu, int dstReg, int srcReg);
 /* 8XYE */
-void lsh(struct Cpu* cpu, int reg);
+void lsh(struct Cpu* cpu, int dstReg, int srcReg);
 
 /* ANNN */
 void loadIndex(struct Cpu* cpu, uint16_t value);
+/* BNNN */
+void offsetJump(struct Cpu* cpu, uint16_t address);
 /* DXYN */
 void drawSprite(struct Cpu* cpu, struct Memory* memory, int xReg, int yReg, int height);
 /* FX0A */
 void waitKeyEvent(struct Cpu* cpu, int reg);
+/* FX07 */
+void getDelayTimer(struct Cpu* cpu, struct Timer* timer, int reg);
+/* FX15, FX18 */
+void setTimer(struct Cpu* cpu, struct Timer* timer, int reg);
 /* FX1E */
 void addAddress(struct Cpu* cpu, struct Memory* memory, int reg);
 /* FX33 */

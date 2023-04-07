@@ -21,6 +21,7 @@ add_executable(chip8
     instructions/display.c
     instructions/math.c
     instructions/io.c
+    instructions/timer.c
 )
 
 target_link_libraries(chip8 logger)

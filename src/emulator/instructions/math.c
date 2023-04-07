@@ -22,18 +22,21 @@ void copy(struct Cpu* cpu, int dstReg, int srcReg) {
 void or(struct Cpu* cpu, int dstReg, int srcReg) {
     logMessage(LOG_LEVEL_INFO, "register[%x] (%d) |= register[%x] (%d)\n", dstReg, cpu->registers[dstReg], srcReg, cpu->registers[srcReg]);
     cpu->registers[dstReg] |= cpu->registers[srcReg];
+    cpu->registers[0xF] = 0;    // CHIP-8 quirk
 }
 
 /* 8XY2 */
 void and(struct Cpu* cpu, int dstReg, int srcReg) {
     logMessage(LOG_LEVEL_INFO, "register[%x] (%d) &= register[%x] (%d)\n", dstReg, cpu->registers[dstReg], srcReg, cpu->registers[srcReg]);
     cpu->registers[dstReg] &= cpu->registers[srcReg];
+    cpu->registers[0xF] = 0;    // CHIP-8 quirk
 }
 
 /* 8XY3 */
 void xor(struct Cpu* cpu, int dstReg, int srcReg) {
     logMessage(LOG_LEVEL_INFO, "register[%x] (%d) ^= register[%x] (%d)\n", dstReg, cpu->registers[dstReg], srcReg, cpu->registers[srcReg]);
     cpu->registers[dstReg] ^= cpu->registers[srcReg];
+    cpu->registers[0xF] = 0;    // CHIP-8 quirk
 }
 
 /* 8XY4 */
@@ -57,9 +60,10 @@ void sub(struct Cpu* cpu, int dstReg, int srcReg) {
 }
 
 /* 8XY6 */
-void rsh(struct Cpu* cpu, int reg) {
-    cpu->registers[0xF] = cpu->registers[reg] & 0x01;
-    cpu->registers[reg] >>= 1;
+void rsh(struct Cpu* cpu, int dstReg, int srcReg) {
+    uint8_t lsb = cpu->registers[srcReg] & 0x01;
+    cpu->registers[dstReg] = cpu->registers[srcReg] >> 1;
+    cpu->registers[0xF] = lsb;
 }
 
 /* 8XY7 */
@@ -73,8 +77,8 @@ void sub2(struct Cpu* cpu, int dstReg, int srcReg) {
 }
 
 /* 8XYE */
-void lsh(struct Cpu* cpu, int reg) {
-    cpu->registers[0xF] = (cpu->registers[reg] & 0x80) >> 7;
-    cpu->registers[reg] <<= 1;
+void lsh(struct Cpu* cpu, int dstReg, int srcReg) {
+    uint8_t msb = (cpu->registers[srcReg] & 0x80) >> 7;
+    cpu->registers[dstReg] = cpu->registers[srcReg] << 1;
+    cpu->registers[0xF] = msb;
 }
-

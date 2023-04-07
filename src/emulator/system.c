@@ -59,7 +59,14 @@ void loadRom(struct System* system, const char* const fileName) {
     logMessage(LOG_LEVEL_INFO, "Loaded ROM\n");
 }
 
+void setSleepCycles(struct System* system, int cycles) {
+    system->cpu.sleepFrames = cycles;
+}
+
 void executeCycle(struct System* system) {
+    if (system->cpu.sleepFrames) {
+        return;
+    }
     uint16_t opcode = readWordMemory(&system->memory, system->cpu.pc);
     // logMessage(LOG_LEVEL_INFO, "Read at %04x opcode %04x\n", system->cpu.pc, opcode);
     executeInstruction(system, opcode);
@@ -114,13 +121,13 @@ void executeInstruction(struct System* system, uint16_t opcode) {
             sub(&system->cpu, dstReg, srcReg);
             break;
         case 6:
-            rsh(&system->cpu, dstReg);
+            rsh(&system->cpu, dstReg, srcReg);
             break;
         case 7:
             sub2(&system->cpu, dstReg, srcReg);
             break;
         case 0xE:
-            lsh(&system->cpu, dstReg);
+            lsh(&system->cpu, dstReg, srcReg);
             break;
         default:
             logMessage(LOG_LEVEL_ERROR, "Illegal opcode %04x\n", opcode);
@@ -133,11 +140,27 @@ void executeInstruction(struct System* system, uint16_t opcode) {
     } else if ((opcode & 0xF000) == 0xA000) {
         loadIndex(&system->cpu, opcode & 0x0FFF);
         stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF000) == 0xB000) {
+        offsetJump(&system->cpu, opcode & 0x0FFF);
     } else if ((opcode & 0xF000) == 0xD000) {
         drawSprite(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
         stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xE09E) {
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xE0A1) {
+        stepInstruction(&system->cpu);
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xF007) { 
+        getDelayTimer(&system->cpu, &system->delayTimer, (opcode & 0x0F00) >> 8);
+        stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF00A) {
         // stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xF015) { 
+        setTimer(&system->cpu, &system->delayTimer, (opcode & 0x0F00) >> 8);
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xF018) { 
+        setTimer(&system->cpu, &system->soundTimer, (opcode & 0x0F00) >> 8);
+        stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF01E) {
         addAddress(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);
         stepInstruction(&system->cpu);
@@ -160,7 +183,14 @@ void selectTest(struct System *system, int testNum) {
     writeMemory(&system->memory, 0x1FF, testNum);
 }
 
+void selectPlatform(struct System *system, int platform) {
+    writeMemory(&system->memory, 0x1FE, platform);
+}
+
 void drawScreen(struct System* system) {
+    if (system->cpu.sleepFrames) {
+        system->cpu.sleepFrames--;
+    }
     drawFrame(&system->display, &system->memory);
 }
 

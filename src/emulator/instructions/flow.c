@@ -27,3 +27,9 @@ void call(struct Cpu* cpu, struct Memory* memory, uint16_t address) {
     memory->data[cpu->sp--] = (cpu->pc >> 8) & 0xFF; 
     cpu->pc = address;
 }
+
+/* BNNN */
+void offsetJump(struct Cpu* cpu, uint16_t address) {
+    logMessage(LOG_LEVEL_INFO, "Jumping to %04x + %04x = %04x\n", address, cpu->registers[0], address + cpu->registers[0]);
+    cpu->pc = address + cpu->registers[0];
+}
