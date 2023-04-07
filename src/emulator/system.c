@@ -66,11 +66,11 @@ void executeCycle(struct System* system) {
 }
 
 void executeInstruction(struct System* system, uint16_t opcode) {
-    // logMessage(LOG_LEVEL_INFO, "Instruction %04x\n", opcode);
+    logMessage(LOG_LEVEL_INFO, "[%04x] %04x\n", system->cpu.pc, opcode);
     if (opcode == 0x00E0) {
         clearScreen(&system->memory);
         stepInstruction(&system->cpu);
-    } else if ((opcode & 0x00FF) == 0x00EE) {
+    } else if (opcode == 0x00EE) {
         ret(&system->cpu, &system->memory);
     } else if ((opcode & 0xF000) == 0x1000) {
         jump(&system->cpu, opcode & 0x0FFF);

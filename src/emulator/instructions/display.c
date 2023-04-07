@@ -3,6 +3,7 @@
 #include <logger.h>
 
 void clearScreen(struct Memory* memory) {
+    logMessage(LOG_LEVEL_DEBUG, "Clearing screen\n");
     memset(memory->data + 0xF00, 0, 256);
 }
 
