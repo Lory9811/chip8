@@ -66,11 +66,16 @@ void executeCycle(struct System* system) {
 }
 
 void executeInstruction(struct System* system, uint16_t opcode) {
+    // logMessage(LOG_LEVEL_INFO, "Instruction %04x\n", opcode);
     if (opcode == 0x00E0) {
         clearScreen(&system->memory);
         stepInstruction(&system->cpu);
+    } else if ((opcode & 0x00FF) == 0x00EE) {
+        ret(&system->cpu, &system->memory);
     } else if ((opcode & 0xF000) == 0x1000) {
         jump(&system->cpu, opcode & 0x0FFF);
+    } else if ((opcode & 0xF000) == 0x2000) {
+        call(&system->cpu, &system->memory, opcode & 0x0FFF);
     } else if ((opcode & 0xF000) == 0x3000) {
         cmpi(&system->cpu, (opcode & 0x0F00) >> 8, opcode & 0x00FF, INSTRUCTIONS_CMP_EQU);
         stepInstruction(&system->cpu);
@@ -78,12 +83,52 @@ void executeInstruction(struct System* system, uint16_t opcode) {
         cmpi(&system->cpu, (opcode & 0x0F00) >> 8, opcode & 0x00FF, INSTRUCTIONS_CMP_NEQ);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF000) == 0x5000) {
-        call(&system->cpu, &system->memory, opcode & 0x0FFF);
+        cmp(&system->cpu, (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, INSTRUCTIONS_CMP_EQU);
+        stepInstruction(&system->cpu);
     } else if ((opcode & 0xF000) == 0x6000) {
         set(&system->cpu, (opcode & 0x0F00) >> 8, opcode & 0x00FF);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF000) == 0x7000) {
         inc(&system->cpu, (opcode & 0x0F00) >> 8, opcode & 0x00FF);
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF000) == 0x8000) {
+        int dstReg = (opcode & 0x0F00) >> 8;
+        int srcReg = (opcode & 0x00F0) >> 4;
+        switch (opcode & 0x000F) {
+        case 0:
+            copy(&system->cpu, dstReg, srcReg);
+            break;
+        case 1:
+            or(&system->cpu, dstReg, srcReg);
+            break;
+        case 2:
+            and(&system->cpu, dstReg, srcReg);
+            break;
+        case 3:
+            xor(&system->cpu, dstReg, srcReg);
+            break;
+        case 4:
+            add(&system->cpu, dstReg, srcReg);
+            break;
+        case 5:
+            sub(&system->cpu, dstReg, srcReg);
+            break;
+        case 6:
+            rsh(&system->cpu, dstReg);
+            break;
+        case 7:
+            sub2(&system->cpu, dstReg, srcReg);
+            break;
+        case 0xE:
+            lsh(&system->cpu, dstReg);
+            break;
+        default:
+            logMessage(LOG_LEVEL_ERROR, "Illegal opcode %04x\n", opcode);
+            break;
+        }
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF000) == 0x9000) {
+        cmp(&system->cpu, (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, INSTRUCTIONS_CMP_NEQ);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF000) == 0xA000) {
         loadIndex(&system->cpu, opcode & 0x0FFF);
@@ -92,7 +137,16 @@ void executeInstruction(struct System* system, uint16_t opcode) {
         drawSprite(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF00A) {
-
+        // stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xF01E) {
+        addAddress(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xF033) {
+        storeBcd(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xF055) {
+        strStoreRegister(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);
+        stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF065) {
         strLoadRegister(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);
         stepInstruction(&system->cpu);

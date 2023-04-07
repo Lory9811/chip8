@@ -14,6 +14,7 @@ add_executable(chip8
     mem.c
     timer.c
     display.c
+    keypad.c
     instructions/memory.c
     instructions/condition.c
     instructions/flow.c

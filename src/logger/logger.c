@@ -23,4 +23,8 @@ void logMessage(int level, const char* message, ...) {
     va_start(args, message);
     vfprintf(file, message, args);
     va_end(args);
+
+    va_start(args, message);
+    vfprintf(stdout, message, args);
+    va_end(args);
 }

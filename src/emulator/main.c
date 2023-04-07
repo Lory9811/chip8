@@ -13,9 +13,9 @@ int main(int argc, char** argv) {
     loadRom(system, "../roms/chip8-test-suite.ch8");
     logMessage(LOG_LEVEL_INFO, "Starting\n");
 
-    selectTest(system, 1);
+    selectTest(system, 3);
 
-    int cyclesPerFrame = 30;
+    int cyclesPerFrame = 50;
     bool quit = false;
     int cycles = 0;
     uint64_t lastDraw = SDL_GetPerformanceCounter();
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
         
         uint64_t now = SDL_GetPerformanceCounter();
         if ((((now - lastDraw) * 1000) / SDL_GetPerformanceFrequency()) > 16) {
-            logMessage(LOG_LEVEL_INFO, "last %d now %d\n", lastDraw, now);
+            // logMessage(LOG_LEVEL_INFO, "last %d now %d\n", lastDraw, now);
             tickTimers(system);
             drawScreen(system);
             cycles = 0;

@@ -7,9 +7,9 @@ const uint8_t maxStackDepth = 48;
 
 /* 00EE */
 void ret(struct Cpu* cpu, struct Memory* memory) {
-    uint32_t returnAddress = (memory->data[cpu->sp] << 8) | memory->data[cpu->sp + 1];
-    logMessage(LOG_LEVEL_INFO, "Returning to %04x (sp %04x)\n", returnAddress, cpu->sp);
     cpu->sp += 2;
+    uint32_t returnAddress = (memory->data[cpu->sp - 1] << 8) | memory->data[cpu->sp];
+    logMessage(LOG_LEVEL_INFO, "Returning to %04x (sp %04x)\n", returnAddress, cpu->sp);
     cpu->pc = returnAddress;
 }
 
