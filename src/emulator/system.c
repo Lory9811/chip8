@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <time.h>
 
 struct System {
     struct Cpu cpu;
@@ -31,6 +32,8 @@ struct System* initSystem(void) {
 
     logMessage(LOG_LEVEL_INFO, "Initializing CHIP-8\n");
 
+    srand(time(NULL));
+
     system->cpu = initCpu();
     system->memory = initMemory(4096);
     system->display = initDisplay();
@@ -43,11 +46,10 @@ struct System* initSystem(void) {
     return system;
 }
 
-void loadRom(struct System* system, const char* const fileName) {
+void loadRom(struct System* system, uint16_t address, const char* const fileName) {
     FILE* file = fopen(fileName, "rb");
     fseek(file, 0, SEEK_SET);
     
-    uint16_t address = 0x200;
     uint16_t bytesRead = 0;
     uint8_t* restrict buffer = malloc(512);
 
@@ -147,6 +149,9 @@ void executeInstruction(struct System* system, uint16_t opcode) {
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF000) == 0xB000) {
         offsetJump(&system->cpu, opcode & 0x0FFF);
+    } else if ((opcode & 0xF000) == 0xC000) {
+        getRandom(&system->cpu, (opcode & 0x0F00) >> 8, (opcode & 0x00FF));
+        stepInstruction(&system->cpu);
     } else if ((opcode & 0xF000) == 0xD000) {
         drawSprite(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
         stepInstruction(&system->cpu);
@@ -170,6 +175,9 @@ void executeInstruction(struct System* system, uint16_t opcode) {
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF01E) {
         addAddress(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);
+        stepInstruction(&system->cpu);
+    } else if ((opcode & 0xF0FF) == 0xF029) {
+        getCharAddress(&system->cpu, (opcode & 0x0F00) >> 8);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF033) {
         storeBcd(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8);

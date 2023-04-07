@@ -6,7 +6,7 @@
 struct System;
 
 struct System* initSystem(void);
-void loadRom(struct System* system, const char* const fileName);
+void loadRom(struct System* system, uint16_t address, const char* const fileName);
 void executeCycle(struct System* system);
 void executeInstruction(struct System* system, uint16_t opcode);
 void selectPlatform(struct System* system, int platform);

@@ -13,6 +13,11 @@ void addAddress(struct Cpu* cpu, struct Memory* memory, int reg) {
     cpu->address += cpu->registers[reg];
 }
 
+/* FX29 */
+void getCharAddress(struct Cpu* cpu, int reg) {
+    cpu->address = 0x000 + 5 * cpu->registers[reg];
+}
+
 /* FX33 */
 void storeBcd(struct Cpu* cpu, struct Memory* memory, int reg) {
     writeMemory(memory, cpu->address, cpu->registers[reg] / 100);

@@ -52,6 +52,8 @@ void lsh(struct Cpu* cpu, int dstReg, int srcReg);
 void loadIndex(struct Cpu* cpu, uint16_t value);
 /* BNNN */
 void offsetJump(struct Cpu* cpu, uint16_t address);
+/* CXNN */
+void getRandom(struct Cpu* cpu, int reg, uint8_t mask);
 /* DXYN */
 void drawSprite(struct Cpu* cpu, struct Memory* memory, int xReg, int yReg, int height);
 /* EX9E, EXA1 */
@@ -64,6 +66,8 @@ void getDelayTimer(struct Cpu* cpu, struct Timer* timer, int reg);
 void setTimer(struct Cpu* cpu, struct Timer* timer, int reg);
 /* FX1E */
 void addAddress(struct Cpu* cpu, struct Memory* memory, int reg);
+/* FX29 */
+void getCharAddress(struct Cpu* cpu, int reg);
 /* FX33 */
 void storeBcd(struct Cpu* cpu, struct Memory* memory, int reg);
 /* FX55 */

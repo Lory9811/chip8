@@ -75,13 +75,12 @@ void handleKeyEvent(struct System* system, SDL_KeyboardEvent* event) {
 int main(int argc, char** argv) {
     logInit(LOG_LEVEL_ALL);
     struct System* system = initSystem();
-    loadRom(system, "../roms/chip8-test-suite.ch8");
+    //loadRom(system, "../roms/chip8-test-suite.ch8");
+    loadRom(system, 0x000, "../roms/font.bin");
+    loadRom(system, 0x200, "../roms/pong.rom");
     logMessage(LOG_LEVEL_INFO, "Starting\n");
 
-    selectPlatform(system, 3);
-    selectTest(system, 5);
-
-    int cyclesPerFrame = 30;
+    int cyclesPerFrame = 10;
     bool quit = false;
     int cycles = 0;
     uint64_t lastDraw = SDL_GetPerformanceCounter();

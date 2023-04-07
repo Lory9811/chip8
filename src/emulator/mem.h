@@ -9,6 +9,7 @@ struct Memory {
 };
 
 struct Memory initMemory(uint16_t size);
+void loadFont(struct Memory* memory);
 uint8_t readMemory(struct Memory* memory, uint16_t address);
 uint16_t readWordMemory(struct Memory* memory, uint16_t address);
 void writeMemory(struct Memory* memory, uint16_t address, uint8_t value);
