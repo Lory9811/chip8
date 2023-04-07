@@ -5,6 +5,7 @@
 #include "../mem.h"
 #include "../display.h"
 #include "../timer.h"
+#include "../keypad.h"
 
 #include <stdint.h>
 
@@ -53,8 +54,10 @@ void loadIndex(struct Cpu* cpu, uint16_t value);
 void offsetJump(struct Cpu* cpu, uint16_t address);
 /* DXYN */
 void drawSprite(struct Cpu* cpu, struct Memory* memory, int xReg, int yReg, int height);
+/* EX9E, EXA1 */
+void keyTest(struct Cpu* cpu, struct Keypad* keypad, int reg, int cond);
 /* FX0A */
-void waitKeyEvent(struct Cpu* cpu, int reg);
+void keyWait(struct Cpu* cpu, struct Keypad* keypad, int reg);
 /* FX07 */
 void getDelayTimer(struct Cpu* cpu, struct Timer* timer, int reg);
 /* FX15, FX18 */

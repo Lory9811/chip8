@@ -10,6 +10,8 @@ struct Cpu initCpu(void) {
     struct Cpu cpu = {
         .pc = 0x200,
         .sp = 0xEFF,
+        .sleepFrames = 0,
+        .waitKey = false,
     };
 
     logMessage(LOG_LEVEL_INFO, "Finished CPU initialization\n");

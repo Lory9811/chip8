@@ -4,6 +4,7 @@
 #include "mem.h"
 #include "display.h"
 #include "timer.h"
+#include "keypad.h"
 
 #include "instructions/instructions.h"
 
@@ -21,6 +22,7 @@ struct System {
     struct Display display;
     struct Timer delayTimer;
     struct Timer soundTimer;
+    struct Keypad keypad;
 };
 
 struct System* initSystem(void) {
@@ -32,6 +34,9 @@ struct System* initSystem(void) {
     system->cpu = initCpu();
     system->memory = initMemory(4096);
     system->display = initDisplay();
+    system->delayTimer = initTimer();
+    system->soundTimer = initTimer();
+    system->keypad = initKeys();
 
     logMessage(LOG_LEVEL_INFO, "Finished CHIP-8 initalization\n");
 
@@ -146,14 +151,16 @@ void executeInstruction(struct System* system, uint16_t opcode) {
         drawSprite(&system->cpu, &system->memory, (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4, opcode & 0x000F);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xE09E) {
+        keyTest(&system->cpu, &system->keypad, (opcode & 0x0F00) >> 8, INSTRUCTIONS_CMP_EQU);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xE0A1) {
-        stepInstruction(&system->cpu);
+        keyTest(&system->cpu, &system->keypad, (opcode & 0x0F00) >> 8, INSTRUCTIONS_CMP_NEQ);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF007) { 
         getDelayTimer(&system->cpu, &system->delayTimer, (opcode & 0x0F00) >> 8);
         stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF00A) {
+        keyWait(&system->cpu, &system->keypad, (opcode & 0x0F00) >> 8);
         // stepInstruction(&system->cpu);
     } else if ((opcode & 0xF0FF) == 0xF015) { 
         setTimer(&system->cpu, &system->delayTimer, (opcode & 0x0F00) >> 8);
@@ -197,4 +204,9 @@ void drawScreen(struct System* system) {
 void tickTimers(struct System* system) {
     tickTimer(&system->delayTimer);
     tickTimer(&system->soundTimer);
+}
+
+void updateKeys(struct System* system, uint16_t pressed, uint16_t released) {
+    pressKeys(&system->keypad, pressed);
+    releaseKeys(&system->keypad, released);
 }
